@@ -1,0 +1,22 @@
+{
+  "name": "yes",
+  "version": "0.1.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "node test/test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/edpop/references-translate.git"
+  },
+  "author": "Eduard Popov",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/edpop/references-translate/issues"
+  },
+  "homepage": "https://github.com/edpop/references-translate#readme"
+}
