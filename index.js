@@ -1,8 +1,10 @@
-const EOL = require('os').EOL;
+const EOL = '\n'; //require('os').EOL;
 const assert = require('assert');
 
 const patterns = require('./patterns');
 const transliterate = require('./transliterate');
+
+const replacements = require('./replacements');
 
 module.exports = referencesLocalization;
 
@@ -25,6 +27,7 @@ function processString (input) {
 
 	let start = [];
 	let end = [];
+	let endAsText = '';
 
 	const space = ' ';
 	const words = input.split(space);
@@ -47,7 +50,7 @@ function processString (input) {
 		while (nextAuthor) {
 			let family = words[caret];
 			assert(patterns.isFamily(family), 'ожидается фамилия');
-			start.push(transliterate(family));
+			start.push(transliterate(family) + ',');
 			caret++;
 
 			let initials = words[caret];
@@ -63,16 +66,20 @@ function processString (input) {
 			caret++;
 		}
 		/**
-		 * После фамилий ставится запятая
+		 * После списка фамилий и инициалов ставится запятая
 		 */
 		start[caret-1] += ',';
 
-		end = words.splice(caret);
+		endAsText = words.splice(caret).join(space);
+
+		replacements.forEach(function (replacement) {
+            endAsText = endAsText.replace(replacement.from, replacement.to);
+        });
 	} catch (err) {
 		console.error(`Ошибка в \`${words[caret]}\``);
 		console.error(err.message);
 		process.exit(1);
 	}
 
-	return start.join(space) + space + end.join(space);
+	return start.join(space) + space + endAsText;
 }
