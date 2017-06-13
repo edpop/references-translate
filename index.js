@@ -76,7 +76,9 @@ function processString (input) {
             endAsText = endAsText.replace(replacement.from, replacement.to);
         });
 	} catch (err) {
-		console.error(`Ошибка в \`${words[caret]}\`\n` + err.message);
+		let wordError = words[caret];
+		wordError = wordError ? `в \`${wordError}\`` : `после \`${words[caret-1]}\``;
+		console.error(`Ошибка ${wordError}:\n${err.message}`);
 	}
 
 	return start.join(space) + space + endAsText;
