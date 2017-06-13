@@ -1,5 +1,5 @@
 {
-  "name": "yes",
+  "name": "references-translate",
   "version": "0.1.0",
   "description": "",
   "main": "index.js",
@@ -7,6 +7,7 @@
     "test": "test"
   },
   "scripts": {
+    "build": "browserify -r ./index.js:./referencesLocalization > dist/bundle.js",
     "test": "node test/test.js"
   },
   "repository": {
@@ -18,5 +19,8 @@
   "bugs": {
     "url": "https://github.com/edpop/references-translate/issues"
   },
-  "homepage": "https://github.com/edpop/references-translate#readme"
+  "homepage": "https://github.com/edpop/references-translate#readme",
+  "devDependencies": {
+    "browserify": "~14.4.0"
+  }
 }
