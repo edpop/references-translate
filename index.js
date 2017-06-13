@@ -26,7 +26,6 @@ function processString (input) {
 	}
 
 	let start = [];
-	let end = [];
 	let endAsText = '';
 
 	const space = ' ';
@@ -49,11 +48,12 @@ function processString (input) {
 		let nextAuthor = true;
 		while (nextAuthor) {
 			let family = words[caret];
-			assert(patterns.isFamily(family), 'ожидается фамилия');
+			assert(family && patterns.isFamily(family), 'ожидается фамилия');
 			start.push(transliterate(family) + ',');
 			caret++;
 
 			let initials = words[caret];
+			assert(initials, 'ожидаются инициалы');
 			if (initials.length === 5) {
 				assert(initials[4] === ',', 'ожидается запятая');
 				initials = initials.substr(0, 4);
@@ -76,9 +76,7 @@ function processString (input) {
             endAsText = endAsText.replace(replacement.from, replacement.to);
         });
 	} catch (err) {
-		console.error(`Ошибка в \`${words[caret]}\``);
-		console.error(err.message);
-		process.exit(1);
+		console.error(`Ошибка в \`${words[caret]}\`\n` + err.message);
 	}
 
 	return start.join(space) + space + endAsText;
