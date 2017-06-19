@@ -1437,7 +1437,7 @@ class Replacement {
 }
 
 module.exports = [
-    new Replacement(/ С\. /, ' pp. '),
+    new Replacement(/ С\. /, ' pp. '),
     new Replacement(/№ (\d+)\./, 'no. $1,'),
     new Replacement(/ Т\. (\d+)/, ' vol. $1'),
     new Replacement(/ (\d\d\d\d)\./, ' $1,'),
