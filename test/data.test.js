@@ -11,7 +11,7 @@ const referencesLocalization = require('../');
 const dataDir = path.join(__dirname, 'data');
 const dirs = fs.readdirSync(dataDir);
 
-dirs.forEach(function (dir,i) {
+dirs.forEach(function (dir) {
 	console.info(`Тестируем ${dir}`);
 	const actual = fs.readFileSync(path.join(dataDir, dir, fileActual), readFileOpts);
 	const expected = fs.readFileSync(path.join(dataDir, dir, fileExpected), readFileOpts);
