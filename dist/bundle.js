@@ -47,10 +47,10 @@ function processString (input) {
 		 * Список фамилий и иинициалов через запятую
 		 */
 		let nextAuthor = true;
+		const authors = [];
 		while (nextAuthor) {
 			let family = words[caret];
 			assert(family && patterns.isFamily(family), 'ожидается фамилия');
-			start.push(transliterate(family) + ',');
 			caret++;
 
 			let initials = words[caret];
@@ -63,13 +63,20 @@ function processString (input) {
 			}
 
 			assert(patterns.isInitials(initials), 'ожидаются инициалы');
-			start.push(transliterate(initials));
 			caret++;
+
+			authors.push(transliterate(family) + ',' + space + transliterate(initials));
 		}
+
 		/**
+		 * Склеиваем авторов через запятую
+		 * Перед последним автором ставится "and" вместо запятой
 		 * После списка фамилий и инициалов ставится запятая
 		 */
-		start[caret-1] += ',';
+		for (let i = 0; i < authors.length; i++) {
+			const andOrComma = i === authors.length - 2 && authors.length > 1 ? ' and' : ',';
+			start.push(authors[i] + andOrComma);
+		}
 
 		endAsText = words.splice(caret).join(space);
 
@@ -1426,22 +1433,25 @@ module.exports.isInitials = isInitials;
 
 },{}],7:[function(require,module,exports){
 class Replacement {
-    /**
-     * @param {RegExp} from
-     * @param {String} to
-     */
-    constructor(from, to) {
-        this.from = from;
-        this.to = to;
-    }
+	/**
+	 * @param {RegExp} from
+	 * @param {String} to
+	 */
+	constructor(from, to) {
+		this.from = from;
+		this.to = to;
+	}
 }
 
 module.exports = [
-    new Replacement(/ С\. /, ' pp. '),
-    new Replacement(/№ (\d+)\./, 'no. $1,'),
-    new Replacement(/ Т\. (\d+)/, ' vol. $1'),
-    new Replacement(/ (\d\d\d\d)\./, ' $1,'),
-    new Replacement(/ \/\/ /, ', ')
+	new Replacement(/ (?:С|P)\. /, ' pp. '),
+	new Replacement(/№/, 'no.'),
+	new Replacement(/ (?:Т|Vol)\./, ' vol.'),
+	new Replacement(/\. (\d\d\d\d)/, ', $1'),
+	new Replacement(/ \d+ [с|p]\./, ''),
+	new Replacement(/ \/\/ /, ', '),
+	new Replacement(/(\d+)\./g, '$1,'),
+	new Replacement(/,$/, '.')
 ];
 
 },{}],8:[function(require,module,exports){
