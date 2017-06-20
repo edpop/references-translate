@@ -10,13 +10,12 @@ class Replacement {
 }
 
 module.exports = [
-	new Replacement(/ С\. /, ' pp. '),
+	new Replacement(/ (?:С|P)\. /, ' pp. '),
 	new Replacement(/№ (\d+)\./, 'no. $1,'),
-	new Replacement(/ Т\. (\d+)/, ' vol. $1'),
+	new Replacement(/ (?:Т|Vol)\. (\d+)/, ' vol. $1'),
 	new Replacement(/ (\d\d\d\d)\./, ' $1,'),
 	new Replacement(/\. (\d\d\d\d)/, ', $1'),
-	new Replacement(/ \d+ с\./, ''),
-	new Replacement(/ \d+ p\./, ''),
+	new Replacement(/ \d+ [с|p]\./, ''),
 	new Replacement(/ \/\/ /, ', '),
 	new Replacement(/,$/, '.')
 ];
