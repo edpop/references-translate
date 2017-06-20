@@ -11,11 +11,11 @@ class Replacement {
 
 module.exports = [
 	new Replacement(/ (?:С|P)\. /, ' pp. '),
-	new Replacement(/№ (\d+)\./, 'no. $1,'),
-	new Replacement(/ (?:Т|Vol)\. (\d+)/, ' vol. $1'),
-	new Replacement(/ (\d\d\d\d)\./, ' $1,'),
+	new Replacement(/№/, 'no.'),
+	new Replacement(/ (?:Т|Vol)\./, ' vol.'),
 	new Replacement(/\. (\d\d\d\d)/, ', $1'),
 	new Replacement(/ \d+ [с|p]\./, ''),
 	new Replacement(/ \/\/ /, ', '),
+	new Replacement(/(\d+)\./g, '$1,'),
 	new Replacement(/,$/, '.')
 ];
