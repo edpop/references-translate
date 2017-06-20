@@ -46,10 +46,10 @@ function processString (input) {
 		 * Список фамилий и иинициалов через запятую
 		 */
 		let nextAuthor = true;
+		const authors = [];
 		while (nextAuthor) {
 			let family = words[caret];
 			assert(family && patterns.isFamily(family), 'ожидается фамилия');
-			start.push(transliterate(family) + ',');
 			caret++;
 
 			let initials = words[caret];
@@ -62,13 +62,20 @@ function processString (input) {
 			}
 
 			assert(patterns.isInitials(initials), 'ожидаются инициалы');
-			start.push(transliterate(initials));
 			caret++;
+
+			authors.push(transliterate(family) + ',' + space + transliterate(initials));
 		}
+
 		/**
+		 * Склеиваем авторов через запятую
+		 * Перед последним автором ставится "and" вместо запятой
 		 * После списка фамилий и инициалов ставится запятая
 		 */
-		start[caret-1] += ',';
+		for (let i = 0; i < authors.length; i++) {
+			const andOrComma = i === authors.length - 2 && authors.length > 1 ? ' and' : ',';
+			start.push(authors[i] + andOrComma);
+		}
 
 		endAsText = words.splice(caret).join(space);
 
