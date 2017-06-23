@@ -21,7 +21,9 @@ function referencesLocalization (input) {
  * @return {String}
  */
 function processString (input) {
-	if (input.trim() === '') {
+	input = input.trim();
+
+	if (input === '') {
 		return input;
 	}
 
