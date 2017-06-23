@@ -9,6 +9,9 @@ class Replacement {
 	}
 }
 
+/**
+ * @type {Array.<Replacement>}
+ */
 module.exports = [
 	new Replacement(/ (?:С|P)\. /, ' pp. '),
 	new Replacement(/№/, 'no.'),
