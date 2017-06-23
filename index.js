@@ -40,9 +40,11 @@ function processString (input) {
 		 * Порядковый номер
 		 */
 		const number = words[caret];
-		assert(/^\d+\.$/.test(number), 'ожидается порядковый номер с точкой');
-		start.push(number);
-		caret++;
+		// Ожидается порядковый номер с точкой
+		if (/^\d+\.$/.test(number)) {
+			start.push(number);
+			caret++;
+		}
 
 		/**
 		 * Список фамилий и иинициалов через запятую
