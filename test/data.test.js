@@ -15,5 +15,8 @@ dirs.forEach(function (dir) {
 	console.info(`Тестируем ${dir}`);
 	const actual = fs.readFileSync(path.join(dataDir, dir, fileActual), readFileOpts);
 	const expected = fs.readFileSync(path.join(dataDir, dir, fileExpected), readFileOpts);
-	assert.strictEqual(referencesLocalization(actual), expected);
+
+	const answer = referencesLocalization(actual);
+	answer.warnings.forEach((warning) => console.log(warning));
+	assert.strictEqual(answer.text, expected);
 });

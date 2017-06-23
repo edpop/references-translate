@@ -1,5 +1,4 @@
 const EOL = '\n'; //require('os').EOL;
-const assert = require('assert');
 
 const patterns = require('./patterns');
 const transliterate = require('./transliterate');
@@ -10,32 +9,50 @@ module.exports = referencesLocalization;
 
 /**
  * @param {String} input
- * @return {String}
+ * 
+ * @typedef {Object} Answer
+ * @property {String} text
+ * @property {Array.<String>} warnings
+ *
+ * @return {Answer}
  */
 function referencesLocalization (input) {
-	return input.split(EOL).map(processString).join(EOL);
-}
+	const warnings = [];
 
-/**
- * @param {String} input
- * @return {String}
- */
-function processString (input) {
-	input = input.trim();
+	const text = input.split(EOL).map(processString).join(EOL);
+	return {
+		text,
+		warnings
+	};
 
-	if (input === '') {
-		return input;
-	}
+	/**
+	 * @param {String} input
+	 * @return {String}
+	 */
+	function processString (input) {
+		input = input.trim();
 
-	let start = [];
-	let endAsText = '';
+		if (input === '') {
+			return input;
+		}
 
-	const space = ' ';
-	const words = input.split(space);
+		let start = [];
+		let endAsText = '';
 
-	let caret = 0;
+		const space = ' ';
+		const words = input.split(space);
+		let caret = 0;
+		function warn (message) {
+			let context = words[caret];
+			let preposition = 'В';
+			if (!context) {
+				preposition = 'После';
+				context = words[caret-1];
+			}
 
-	try {
+			warnings.push(`${preposition} \`${context}\` ${message}`);
+		}
+
 		/**
 		 * Порядковый номер
 		 */
@@ -53,18 +70,29 @@ function processString (input) {
 		const authors = [];
 		while (nextAuthor) {
 			let family = words[caret];
-			assert(family && patterns.isFamily(family), 'ожидается фамилия');
+
+			if (!family) break;
+			if (!patterns.isFamily(family)) {
+				warn('фамилия не распознана');
+				break;
+			}
 			caret++;
 
 			let initials = words[caret];
-			assert(initials, 'ожидаются инициалы');
+
+			if (!initials) break;
+
 			if (initials.endsWith(',')) {
 				initials = initials.substr(0, initials.length - 1);
 			} else {
 				nextAuthor = false;
 			}
 
-			assert(patterns.isInitials(initials), 'ожидаются инициалы');
+			if (!patterns.isInitials(initials)) {
+				caret--;
+				warn('инициалы не распознаны');
+				break;
+			}
 			caret++;
 
 			authors.push(transliterate(family) + ',' + space + transliterate(initials));
@@ -80,16 +108,14 @@ function processString (input) {
 			start.push(authors[i] + andOrComma);
 		}
 
+		const startAsText = start.length > 0 ? start.join(space) + space : '';
+
 		endAsText = words.splice(caret).join(space);
 
 		replacements.forEach(function (replacement) {
-            endAsText = endAsText.replace(replacement.from, replacement.to);
-        });
-	} catch (err) {
-		let wordError = words[caret];
-		wordError = wordError ? `в \`${wordError}\`` : `после \`${words[caret-1]}\``;
-		console.error(`Ошибка ${wordError}:\n${err.message}`);
-	}
+			endAsText = endAsText.replace(replacement.from, replacement.to);
+		});
 
-	return start.join(space) + space + endAsText;
+		return startAsText + endAsText;
+	}
 }
