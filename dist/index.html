@@ -12,31 +12,30 @@
 		body {
 			padding: 5px;
 		}
-		#texts {
+		#texts, #consoles {
 			width: 100%;
 			height: 100%;
-		}
-		td {
-			width: 50%;
 		}
 		.text {
 			width: 100%;
 			height: 600px;
 		}
+		.console {
+			width: 100%;
+			height: 100%;
+		}
 		textarea {
 			resize: none;
 		}
-		#errorConsole {
-			width: 200px;
-			height: 100px;
-			vertical-align: top;
+		#errorConsole, #warnConsole {
+			height: calc(100vh - 800px);
 		}
 	</style>
 </head>
 <body>
 <h2>Помощник перевода списка литературы для научного журнала</h2>
 <table id="texts">
-	<tr style="height: 10px">
+	<tr>
 		<td>
 			<label for="main">Исходный текст</label>
 		</td>
@@ -54,8 +53,16 @@
 		</td>
 	</tr>
 </table>
-<label for="errorConsole">Вывод ошибок</label><br>
-<textarea id="errorConsole" readonly></textarea>
+<table id="consoles">
+	<tr>
+		<td><label for="warnConsole">Предупреждения</label><br></td>
+		<td><label for="errorConsole">Ошибки</label></td>
+	</tr>
+	<tr>
+		<td><textarea id="warnConsole" class="console" readonly></textarea></td>
+		<td><textarea id="errorConsole" class="console" readonly></textarea></td>
+	</tr>
+</table>
 </body>
 <script>
 	var referencesLocalization = require('./referencesLocalization');
@@ -63,13 +70,14 @@
 	var txtMain = document.getElementById('main');
 	var txtTranslated = document.getElementById('translated');
 	var txtErrorConsole = document.getElementById('errorConsole');
+	var txtWarnConsole = document.getElementById('warnConsole');
 
 	var example = [
 		'1. Петров В.А. Название статьи // Название журнала. 2000. Т. 29, № 2. С. 123-456.',
 		'2. Петров В.А., Иванова Б.А. Название статьи // Название журнала. 2099. Т. 63, № 4. С. 654-456'
 	].join('\n');
 	txtMain.placeholder = 'Пример:\n' + example;
-	txtTranslated.placeholder = 'Пример перевода:\n' + referencesLocalization(example);
+	txtTranslated.placeholder = 'Пример перевода:\n' + referencesLocalization(example).text;
 
 	console.error = consoleError;
 
@@ -77,9 +85,15 @@
 		txtErrorConsole.value = message;
 		txtErrorConsole.style.backgroundColor = '#FFEBEE';
 	}
+	function consoleWarn (message) {
+		txtWarnConsole.value = message;
+		txtWarnConsole.style.backgroundColor = '#EAF1B2';
+	}
 	function consoleClear () {
 		txtErrorConsole.value = '';
 		txtErrorConsole.style.backgroundColor = '#FFFFFF';
+		txtWarnConsole.value = '';
+		txtWarnConsole.style.backgroundColor = '#FFFFFF';
 	}
 
 	var busy = false;
@@ -90,9 +104,13 @@
 				consoleClear();
 
 				try {
-					txtTranslated.value = referencesLocalization(txtMain.value);
+					var answer = referencesLocalization(txtMain.value);
+					txtTranslated.value = answer.text;
+					if (answer.warnings.length > 0) {
+						consoleWarn(answer.warnings.join('\n'));
+					}
 				} catch (err) {
-					consoleError(err.message);
+					consoleError(typeof err === 'string' ? err : err.message);
 				}
 
 				busy = false;
