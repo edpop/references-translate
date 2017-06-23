@@ -89,8 +89,8 @@ function referencesLocalization (input) {
 			}
 
 			if (!patterns.isInitials(initials)) {
-				caret--;
 				warn('инициалы не распознаны');
+				caret--;
 				break;
 			}
 			caret++;
