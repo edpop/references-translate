@@ -141,7 +141,9 @@ const isUpper = (str) => reUpper.test(str);
 const isCyrillic = (str) => reCyrillic.test(str);
 const isLatin = (str) => reLatin.test(str);
 const isWord = (str) => isLatin(str) || isCyrillic(str);
-const isFamily = (str) => isWord(str) && isUpper(str[0]) && (str.length === 1 || isLower(str.substr(1)));
+const isFamily = (str) => str.split('-').every(
+	(s) => isWord(s) && isUpper(s[0]) && (s.length === 1 || isLower(s.substr(1)))
+);
 
 const dot = '.';
 const isInitials = (str) => (
