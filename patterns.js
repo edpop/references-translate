@@ -21,9 +21,10 @@ const isFamily = (str) => isWord(str) && isUpper(str[0]) && (str.length === 1 ||
 
 const dot = '.';
 const isInitials = (str) => (
-	str.length === 4 &&
-	str[1] === dot && str[3] === dot &&
-	isWord(str[0]+str[2]) && isUpper(str[0]+str[2])
+	str[1] === dot && (
+		(str.length === 2 && isWord(str[0]) && isUpper(str[0])) ||
+		(str.length === 4 && str[3] === dot && isWord(str[0]+str[2]) && isUpper(str[0]+str[2]))
+	)
 );
 
 

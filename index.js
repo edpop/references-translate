@@ -58,9 +58,8 @@ function processString (input) {
 
 			let initials = words[caret];
 			assert(initials, 'ожидаются инициалы');
-			if (initials.length === 5) {
-				assert(initials[4] === ',', 'ожидается запятая');
-				initials = initials.substr(0, 4);
+			if (initials.endsWith(',')) {
+				initials = initials.substr(0, initials.length - 1);
 			} else {
 				nextAuthor = false;
 			}
