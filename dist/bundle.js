@@ -102,8 +102,8 @@ function referencesLocalization (input) {
 			/**
 			 * Склеиваем авторов через запятую
 			 * Если в конце авторов нет "и другие (et al.)",
-			 *   то перед последним автором ставится "and" и 
-			 *   после списка фамилий и инициалов ставится запятая
+			 *   то перед последним автором ставится "and"
+			 * После списка авторов ставится запятая
 			 */
 			if (nextAuthor) {
 				if (lastAuthor) {
@@ -116,7 +116,7 @@ function referencesLocalization (input) {
 						authors.push(lastAuthor + ',');
 					}
 					authors.push(currentAuthor);
-					authors.push('et al.');
+					authors.push('et al.,');
 					caret += 2;
 				} else {
 					if (lastAuthor) {
