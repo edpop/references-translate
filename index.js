@@ -68,6 +68,7 @@ function referencesLocalization (input) {
 		 */
 		let nextAuthor = true;
 		const authors = [];
+		let currentAuthor, lastAuthor;
 		while (nextAuthor) {
 			let family = words[caret];
 
@@ -95,18 +96,37 @@ function referencesLocalization (input) {
 			}
 			caret++;
 
-			authors.push(transliterate(family) + ',' + space + transliterate(initials));
+			currentAuthor = transliterate(family) + ',' + space + transliterate(initials);
+
+			/**
+			 * Склеиваем авторов через запятую
+			 * Если в конце авторов нет "и другие (et al.)",
+			 *   то перед последним автором ставится "and" и 
+			 *   после списка фамилий и инициалов ставится запятая
+			 */
+			if (nextAuthor) {
+				if (lastAuthor) {
+					authors.push(lastAuthor + ',');
+				}
+				lastAuthor = currentAuthor;
+			} else {
+				if (words[caret] === 'et' && words[caret+1] === 'al.') {
+					if (lastAuthor) {
+						authors.push(lastAuthor + ',');
+					}
+					authors.push(currentAuthor);
+					authors.push('et al.');
+					caret += 2;
+				} else {
+					if (lastAuthor) {
+						authors.push(lastAuthor + ' and');
+					}
+					authors.push(currentAuthor + ',');
+				}
+			}
 		}
 
-		/**
-		 * Склеиваем авторов через запятую
-		 * Перед последним автором ставится "and" вместо запятой
-		 * После списка фамилий и инициалов ставится запятая
-		 */
-		for (let i = 0; i < authors.length; i++) {
-			const andOrComma = i === authors.length - 2 && authors.length > 1 ? ' and' : ',';
-			start.push(authors[i] + andOrComma);
-		}
+		start = start.concat(authors);
 
 		const startAsText = start.length > 0 ? start.join(space) + space : '';
 
